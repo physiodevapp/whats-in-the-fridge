@@ -10,7 +10,8 @@ mongoose.connect(MONGO_DB_URI)
 })
 
 process.on("SIGINT", function() {
-  mongoose.connection.close( function() {
+  mongoose.connection.close()
+  .then(() => {
     console.log(`Mongoose was disconnected on App termination`)
     process.exit(0)
   })
