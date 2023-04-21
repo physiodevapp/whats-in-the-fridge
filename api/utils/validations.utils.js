@@ -11,6 +11,11 @@ const isValidUrl = (url) => {
   }
 }
 
+const isValidEmail = (email) => {
+  return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)
+}
+
 module.exports = {
-  isValidUrl
+  isValidUrl,
+  isValidEmail
 }

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const bcrypt = require('bcrypt')
+const { isValidEmail } = require('../utils/validations.utils')
 
 const grocerDinnerSchema = new Schema({
   name: {
@@ -13,9 +14,7 @@ const grocerDinnerSchema = new Schema({
     required: "email is required",
     // match: [/^\S+@\S+\.\S+$/, "Student email must be valid"]
     validate: {
-      validator: function (email) {
-        return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)
-      },
+      validator: isValidEmail,
       message: "Please, enter valid email"
     },
     unique: true
@@ -27,7 +26,7 @@ const grocerDinnerSchema = new Schema({
   },
   confirmed: {
     type: Boolean,
-    default: process.env.USER_EMAIL_CONFIRMATION_REQUIRED === "false"
+    default: process.env.IS_USER_EMAIL_CONFIRMATION_REQUIRED === "false"
   },
   username: {
     type: String,
@@ -57,6 +56,7 @@ const grocerDinnerSchema = new Schema({
 
 grocerDinnerSchema.pre('save', function (next) {
   const grocerDinner = this
+  console.log('is password modified? >> ', grocerDinner.isModified('password'))
   if (grocerDinner.isModified('password')) {
     bcrypt.genSalt(10)
       .then((salt) => {
@@ -72,7 +72,7 @@ grocerDinnerSchema.pre('save', function (next) {
   }
 })
 
-grocerDinnerSchema.method.checkPassword = function(password) {
+grocerDinnerSchema.methods.checkPassword = function(password) {
   return bcrypt.compare(password, this.password)
 }
 

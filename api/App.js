@@ -9,9 +9,13 @@ const logger = require('morgan')
 const createError = require('http-errors')
 const mongoose = require('mongoose')
 const express = require('express')
+const secureMid = require('./middlewares/secure.middleware')
 
 // Create express App
 const app = express()
+
+// Configure request unwanted data
+app.use(secureMid.cleanBody)
 
 // Configure request content-type header
 app.use(express.json())
@@ -29,12 +33,28 @@ app.use((req, res, next) => {
 })
 app.use((error, req, res, next) => {
 
-  // Configure model validation errors
   if (error instanceof mongoose.Error.ValidationError) {
+    // Configure model validation errors
     error = createError(400, error)
-  }  
-  // TODO configure duplicate ids error
-  // TODO configure not found id error
+  } else if (error instanceof mongoose.Error.CastError
+    && error.path === '_id') {
+    // Configure not found id error
+    const resourceName = error.model().constructor.modelName
+    error = createError(404, `${resourceName} not found`)
+  } else if (error.message.includes('E11000')) {
+    // Configure duplicate keys error
+    Object.keys(error.keyValue).forEach((key) => error.keyValue[key] = "Already exists")
+    // OPCION 1 >> devuelve el mensaje de error original, que incluye el valor de la key duplilcada
+    // Object.assign(error, { errors: error.keyValue })
+    // error = createError(409, error)
+
+    // OPCION 2 >> le pasamos como segundo argumento a createError el objeto de errores y, como por defecto un error siempre tiene mensaje, en este caso el mensaje lo cogerá directamente del tipo de error, en este caso, 409. 
+    // NOTA: aunque el segundo argumento de createError fuera undefined, seguiría existiendo un campo message con el texto correspondiente al código de error del primer argumento!
+    error = createError(409, { errors: error.keyValue })
+  } else if (!error.status) {
+    error = createError(500, error)
+  }
+  // console.log(error)
   const data = {
     message: error.message
   }
@@ -43,7 +63,7 @@ app.use((error, req, res, next) => {
   if (error.errors) {
     const errors = Object.keys(error.errors)
       .reduce((errors, errorKey) => {
-        errors[errorKey] = error.errors[errorKey]?.message || error.errors[errorKey]      
+        errors[errorKey] = error.errors[errorKey]?.message || error.errors[errorKey]
         return errors
       }, {})
     data.errors = errors

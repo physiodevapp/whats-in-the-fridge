@@ -8,21 +8,15 @@ const pantrySchema = new Schema({
     minLength: [10, "Pantry name must be at least 10 chars length"],
     unique: true
   },
-  admins: [
+  members: [
     {
-      ref: 'GrocerDinner',
-      type: mongoose.Schema.Types.ObjectId
-    }
-  ],
-  users: [
-    {
-      user: {
+      grocerDinnerObjId: {
         ref: 'GrocerDinner',
         type: mongoose.Schema.Types.ObjectId
       },
       isAdmin: {
         type: Boolean,
-        default: true // TODO 
+        default: process.env.IS_PANTRY_ADMIN_REQUIRED === "false"
       }
     }
   ],

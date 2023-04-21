@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-const { isValidUrl } = require('../utils/validators.utils')
+const { isValidUrl } = require('../utils/validations.utils')
 
 const productSchema = new Schema({
   name: {
