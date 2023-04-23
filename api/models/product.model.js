@@ -20,8 +20,12 @@ const productSchema = new Schema({
       validator: isValidUrl
     }
   },
-  author: {
+  grocerDinnerObjId: {
     ref: 'GrocerDinner',
+    type: mongoose.Schema.Types.ObjectId
+  },
+  pantryObjId: {
+    ref: 'Pantry',
     type: mongoose.Schema.Types.ObjectId
   },
   tags: [

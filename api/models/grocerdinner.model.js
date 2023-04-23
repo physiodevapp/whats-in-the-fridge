@@ -12,7 +12,6 @@ const grocerDinnerSchema = new Schema({
   email: {
     type: String,
     required: "email is required",
-    // match: [/^\S+@\S+\.\S+$/, "Student email must be valid"]
     validate: {
       validator: isValidEmail,
       message: "Please, enter valid email"
@@ -26,11 +25,11 @@ const grocerDinnerSchema = new Schema({
   },
   confirmed: {
     type: Boolean,
-    default: process.env.IS_USER_EMAIL_CONFIRMATION_REQUIRED === "false"
+    default: process.env.USER_EMAIL_CONFIRMATION_REQUIRED === "false"
   },
   username: {
     type: String,
-    required: "Name is required",
+    required: "Username is required",
     match: [/^[a-z0-9]+$/, "username must be lowercase and without spaces"],
     lowecase: true,
     unique: true
@@ -42,6 +41,9 @@ const grocerDinnerSchema = new Schema({
   }
 }, {
   timestamps: true,
+  toObject: {
+    virtuals: true
+  },
   toJSON: {
     virtuals: true,
     transform: function (doc, ret) {
@@ -52,6 +54,12 @@ const grocerDinnerSchema = new Schema({
       return ret
     }
   }
+})
+
+grocerDinnerSchema.virtual('pantries', {
+  ref: "Pantry",
+  localField: '_id',
+  foreignField : 'members.grocerDinnerObjId'
 })
 
 grocerDinnerSchema.pre('save', function (next) {

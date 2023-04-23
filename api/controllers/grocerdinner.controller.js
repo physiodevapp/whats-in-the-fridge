@@ -1,18 +1,36 @@
 const GrocerDinner = require('../models/grocerdinner.model')
+const Pantry = require('../models/pantry.model')
 const createError = require('http-errors')
 const jwt = require('jsonwebtoken')
 
 module.exports.create = (req, res, next) => {
   GrocerDinner.create(req.body)
     .then((grocerdinner) => {
-      console.log('new grocerdinner created >> ', grocerdinner)
-      res.status(201).json(grocerdinner)
+      return Pantry.create({
+        name: `${grocerdinner.username}'s tasty pantry`,
+        username: `${grocerdinner.username}'s tasty pantry`,
+        members: [{
+          grocerDinnerObjId: grocerdinner.id,
+          role: `${grocerdinner.role}`
+        }],
+        "mapLocation": {
+          "type": "Point",
+          "coordinates": [
+            -109.41,
+            -102.41
+          ]
+        }
+      }).then((pantry) => {
+        console.log('new grocerdinner created >> ', grocerdinner)
+        Object.assign(grocerdinner, { pantries: pantry })
+        res.status(201).json(grocerdinner)
+      })
     })
     .catch(next)
 }
 
 module.exports.detail = (req, res, next) => {
-  console.log('grocerdinner details >> ', grocerDinner)
+  console.log('grocerdinner details >> ', req.grocerDinner)
   res.status(200).json(req.grocerDinner)
 }
 
@@ -26,10 +44,13 @@ module.exports.update = (req, res, next) => {
     .catch(next)
 }
 
-module.exports.delete = (req, res, next) => {
+module.exports.delete = (req, res, next) => { //TODO rehacer
   console.log('delete >> ', req.user)
-  GrocerDinner.deleteOne({ _id: req.params.id })
-    .then(() => res.status(204).json())
+  Pantry.deleteMany({ 'members.grocerDinnerObjId': { $in: [req.user.id] }, 'members.role': { $in: [req.user.role] } })
+    .then(() => {
+      return GrocerDinner.deleteOne({ _id: req.params.grocerDinnerId })
+        .then(() => res.status(204).json())
+    })
     .catch(next)
 }
 

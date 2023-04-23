@@ -14,11 +14,34 @@ module.exports.exists = (req, res, next) => {
     .catch(next)
 }
 
-module.exports.isMember = (req, res, next) => {
-  const member = req.pantry.members.filter(({grocerDinnerObjId}) => grocerDinnerObjId === req.user.id)
-  if (member) {
-    next()
-  } else {
-    next(createError(403, "Forbidden access"))
+module.exports.canMember = (action) => {
+  return (req, res, next) => {
+    const member = req.pantry.members.find((member) => member.grocerDinnerObjId == req.user.id)
+    if (member) {      
+      const canDo = member.role === req.user.role && action === 'delete' ||
+      req.user.role !== 'guest' && action === 'update' ||
+      !action
+
+      if (canDo) {
+        next()
+      } else {
+        next(createError(403, "Forbidden membership activity"))
+      }
+
+    } else {
+      next(createError(403, "Forbidden membership"))
+    }
   }
 }
+
+module.exports.count = (req, res, next) => {
+  Pantry.find({ 'members.grocerDinnerObjId': { $in: [req.user.id] } })
+    .then((pantries) => {
+      if (pantries.length > 1) {
+        next()
+      } else {
+        next(createError(404, "Forbidden deletion: you can not have no pantries"))
+      }
+    })
+    .catch(next)
+} 

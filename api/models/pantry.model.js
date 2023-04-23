@@ -5,7 +5,12 @@ const pantrySchema = new Schema({
   name: {
     type: String,
     required: "Pantry name is required",
-    minLength: [10, "Pantry name must be at least 10 chars length"],
+    minLength: [10, "Pantry name must be at least 10 chars length"]
+  },
+  username: {
+    type: String,
+    required: "Pantry username is required",
+    minLength: [4, "Pantry username must be at least 4 chars len"],
     unique: true
   },
   members: [
@@ -14,9 +19,10 @@ const pantrySchema = new Schema({
         ref: 'GrocerDinner',
         type: mongoose.Schema.Types.ObjectId
       },
-      isAdmin: {
-        type: Boolean,
-        default: process.env.IS_PANTRY_ADMIN_REQUIRED === "false"
+      role: {
+        type: String,
+        enum: ['guest', 'vip', 'dinner', 'grocer'], // guest añade/quita productos >> vip same+ invita >> dinner same+ elimina >> grocer same+ visible por todos
+        default: 'guest'
       }
     }
   ],
@@ -31,10 +37,11 @@ const pantrySchema = new Schema({
       required: true
     }
   }
-}, { 
+}, {
   timestamps: true,
   toJSON: {
-    transform: function(doc, ret) {
+    virtuals: true,
+    transform: function (doc, ret) {
       delete ret.__v
       ret.id = ret._id
       delete ret._id

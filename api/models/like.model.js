@@ -2,11 +2,15 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const likeSchema = new Schema({
-  dinner: {
+  grocerDinnerObjId: {
     ref: "GrocerDinner",
     type: mongoose.Schema.Types.ObjectId
   },
-  product: {
+  pantryObjId: {
+    ref: "Pantry",
+    type: mongoose.Schema.Types.ObjectId
+  }, 
+  productObjId: {
     ref: "Product",
     type: mongoose.Schema.Types.ObjectId
   }

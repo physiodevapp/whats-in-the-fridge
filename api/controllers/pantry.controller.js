@@ -1,7 +1,14 @@
 const Pantry = require('../models/pantry.model')
+const Product = require('../models/product.model')
 const createError = require('http-errors')
 
 module.exports.create = (req, res, next) => {
+  req.body.members = [
+    {
+      grocerDinnerObjId: req.user.id,
+      role: req.user.role
+    }
+  ]
   Pantry.create(req.body)
     .then((pantry) => {
       res.status(201).json(pantry)
@@ -9,16 +16,21 @@ module.exports.create = (req, res, next) => {
     .catch(next)
 }
 
-module.exports.list = (req, res, next) => {
-  Pantry.find({ 'members.grocerDinnerObjId': { $in: [req.user.id] } })
-    .then((pantries) => {
-      if (pantries) {
-        res.status(200).json(pantries)
-      } else {
-        next(createError(404, "No pantries found"))
-      }
-    })
-    .catch(next)
+module.exports.list = (role) => {
+  return (req, res, next) => {
+    const criterial = role === 'grocer' ? { 'members.role': { $in: [role] } } : { 'members.grocerDinnerObjId': { $in: [req.user.id] } }
+    Pantry
+      .find(criterial)
+      .populate('members.grocerDinnerObjId')
+      .then((pantries) => {
+        if (pantries.length) {
+          res.status(200).json(pantries)
+        } else {
+          next(createError(404, "No pantries found"))
+        }
+      })
+      .catch(next)
+  }
 }
 
 module.exports.detail = (req, res, next) => {
@@ -36,7 +48,11 @@ module.exports.update = (req, res, next) => {
 }
 
 module.exports.delete = (req, res, next) => {
-  Pantry.deleteOne({ _id: req.params.pantryId })
-    .then(() => res.json(204).json())
+  Product.deleteMany({ grocerDinnerObjId: req.user.id, pantryObjId: req.params.pantryId })
+    .then(() => {
+      return Pantry.deleteOne({ _id: req.params.pantryId })
+        .then(() => res.status(204).json())
+        .catch(next)
+    })
     .catch(next)
 }
