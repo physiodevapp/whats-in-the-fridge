@@ -9,7 +9,7 @@ module.exports.create = (req, res, next) => {
 }
 
 module.exports.delete = (req, res, next) => {
-  Like.deleteOne({ _id: req.params.likeId })
+  Like.deleteOne({ grocerDinnerObjId: req.user.id, pantryObjId: req.params.pantryId, productObjId: req.params.productId })
     .then(() => res.status(204).json())
     .catch(next)
 }

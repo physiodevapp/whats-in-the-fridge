@@ -59,7 +59,7 @@ router.delete('/pantries/:pantryId/products/:productId', secureMid.auth, pantryM
 // ****************
 router.post('/pantries/:pantryId/products/:productId/likes', secureMid.auth, pantryMid.exists, productMid.exists, likeMid.exists, likeMid.canDinner('create'), likeCtrl.create)
 
-router.delete('/pantries/:pantryId/products/:productId/likes/:likeId', secureMid.auth, pantryMid.exists, productMid.exists, likeMid.exists, likeMid.canDinner('delete'), likeCtrl.delete)
+router.delete('/pantries/:pantryId/products/:productId/likes', secureMid.auth, pantryMid.exists, productMid.exists, likeMid.exists, likeMid.canDinner('delete'), likeCtrl.delete)
 
 // Access routes
 // *************
