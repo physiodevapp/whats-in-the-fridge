@@ -26,11 +26,12 @@ const pantrySchema = new Schema({
       }
     }
   ],
-  mapLocation: {
+  location: {
     type: {
       type: String,
       enum: ['Point'],
-      required: true
+      default: "Point",
+      required: true,
     },
     coordinates: {
       type: [Number],
@@ -39,6 +40,9 @@ const pantrySchema = new Schema({
   }
 }, {
   timestamps: true,
+  toObject: {
+    virtuals: true
+  },
   toJSON: {
     virtuals: true,
     transform: function (doc, ret) {
@@ -48,6 +52,40 @@ const pantrySchema = new Schema({
       return ret
     }
   }
+})
+
+pantrySchema.index({ location: "2dsphere" })
+
+pantrySchema.static('findByDistance', function ({ longitude, latitude, distance, unit }) {
+
+  const unitValue = unit === "km" ? 1000 : 1609.3 // miles >> unit: 'm'
+  return this.aggregate(
+    [{
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [longitude, latitude]
+        },
+        query: {
+          'members.role': 'grocer'
+        },
+        maxDistance: distance * unitValue,
+        distanceField: 'distance',
+        distanceMultiplier: 1 / unitValue,
+        key: 'location',
+        spherical: true
+      },
+    }, 
+    {
+      $sort: {
+        distance: 1
+      }
+    }
+    // {
+    //   $limit: 4 
+    // }
+    ]
+  )
 })
 
 const Pantry = mongoose.model('Pantry', pantrySchema)

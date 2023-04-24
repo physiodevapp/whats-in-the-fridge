@@ -13,15 +13,15 @@ module.exports.create = (req, res, next) => {
           grocerDinnerObjId: grocerdinner.id,
           role: `${grocerdinner.role}`
         }],
-        "mapLocation": {
+        location : {
           "type": "Point",
           "coordinates": [
-            -109.41,
-            -102.41
+            79.814636,
+            28.625181
           ]
         }
       }).then((pantry) => {
-        console.log('new grocerdinner created >> ', grocerdinner)
+        // console.log('new grocerdinner created >> ', grocerdinner)
         Object.assign(grocerdinner, { pantries: pantry })
         res.status(201).json(grocerdinner)
       })

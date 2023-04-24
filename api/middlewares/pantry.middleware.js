@@ -18,7 +18,7 @@ module.exports.canMember = (action) => {
   return (req, res, next) => {
     const member = req.pantry.members.find((member) => member.grocerDinnerObjId == req.user.id)
     if (member) {      
-      const canDo = member.role === req.user.role && action === 'delete' ||
+      const canDo = member.role === req.user.role && (action === 'delete' || action === 'near')   ||
       req.user.role !== 'guest' && action === 'update' ||
       !action
 

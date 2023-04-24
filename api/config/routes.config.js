@@ -29,9 +29,13 @@ router.patch('/grocerdinners/:grocerDinnerId', secureMid.auth, grocerdinnerMid.e
 
 router.delete('/grocerdinners/:grocerDinnerId', secureMid.auth, grocerdinnerMid.exists, grocerdinnerMid.isMe, grocerdinnerCtrl.delete)
 
+// Grocer pantry routes - PUBLIC
+// *****************************
+router.get('/pantries', pantryCtrl.list('grocer'))
+
 // Pantry routes
 // *************
-router.get('/pantries', pantryCtrl.list('grocer'))
+router.get('/pantries/:pantryId/near', secureMid.auth, pantryMid.exists, pantryMid.canMember('near'), pantryCtrl.list('near'))
 
 router.post('/pantries', secureMid.auth, pantryCtrl.create)
 
@@ -42,6 +46,7 @@ router.get('/pantries/:pantryId', secureMid.auth, pantryMid.exists, pantryMid.ca
 router.patch('/pantries/:pantryId', secureMid.auth, pantryMid.exists, pantryMid.canMember('update'), pantryCtrl.update)
 
 router.delete('/pantries/:pantryId', secureMid.auth, pantryMid.exists, pantryMid.canMember('delete'), pantryMid.count, pantryCtrl.delete)
+
 
 // Product routes
 //***************

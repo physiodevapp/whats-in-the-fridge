@@ -16,20 +16,42 @@ module.exports.create = (req, res, next) => {
     .catch(next)
 }
 
-module.exports.list = (role) => {
+module.exports.list = (focus) => {
   return (req, res, next) => {
-    const criterial = role === 'grocer' ? { 'members.role': { $in: [role] } } : { 'members.grocerDinnerObjId': { $in: [req.user.id] } }
-    Pantry
-      .find(criterial)
-      .populate('members.grocerDinnerObjId')
+    if (focus === 'near') {
+      console.log(req.pantry)
+      const params = {
+        longitude: req.pantry.location.coordinates[0],
+        latitude: req.pantry.location.coordinates[1],
+        distance: parseFloat(req.query?.distance),
+        unit: req.query?.unit || 'km'
+      }
+      // console.log('params >> ', params)
+
+      Pantry.findByDistance(params)
       .then((pantries) => {
-        if (pantries.length) {
+        if (pantries) {
           res.status(200).json(pantries)
         } else {
           next(createError(404, "No pantries found"))
         }
       })
       .catch(next)
+
+    } else {
+      const criterial = focus === 'grocer' ? { 'members.role': { $in: [focus] } } : { 'members.grocerDinnerObjId': { $in: [req.user.id] } }
+      Pantry
+        .find(criterial)
+        .populate('members.grocerDinnerObjId')
+        .then((pantries) => {
+          if (pantries.length) {
+            res.status(200).json(pantries)
+          } else {
+            next(createError(404, "No pantries found"))
+          }
+        })
+        .catch(next)
+    }
   }
 }
 

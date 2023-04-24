@@ -64,7 +64,7 @@ grocerDinnerSchema.virtual('pantries', {
 
 grocerDinnerSchema.pre('save', function (next) {
   const grocerDinner = this
-  console.log('is password modified? >> ', grocerDinner.isModified('password'))
+  // console.log('is password modified? >> ', grocerDinner.isModified('password'))
   if (grocerDinner.isModified('password')) {
     bcrypt.genSalt(10)
       .then((salt) => {
