@@ -50,7 +50,9 @@ module.exports.invitationAuth = (req, res, next) => {
       .populate('pantries')
       .then((grocerDinner) => {
         if (grocerDinner && grocerDinner?.role === 'dinner') {
-          req.user = grocerDinner // como hacer para que te loguee y a continuación ya sigua con el proceso de invitarte (la segunda parte si funciona)
+          req.user = grocerDinner 
+          // como hacer para que te loguee y a continuación ya sigua con el proceso de invitarte (la segunda parte si funciona). Habria que redirigir a la pagina del login si no es persistente el token y desde ahi continuar
+          req.params.pantryId = decoded.pantryId
           req.userInvitation = {
             newMember: {
               grocerDinnerObjId: grocerDinner._id,

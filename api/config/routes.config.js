@@ -52,7 +52,7 @@ router.patch('/pantries/:pantryId', secureMid.auth, pantryMid.exists, pantryMid.
 
 router.delete('/pantries/:pantryId', secureMid.auth, pantryMid.exists, pantryMid.canMember('delete'), pantryCtrl.delete)
 
-router.patch('/pantries/:pantryId/invitation/:invitationToken', secureMid.invitationAuth, pantryMid.exists, pantryMid.canMember('join'), pantryCtrl.update)
+router.patch('/pantries/invitation/:invitationToken', secureMid.invitationAuth, pantryMid.exists, pantryMid.canMember('join'), pantryCtrl.update) // TODO redirigir al login en react si no hay toque de login y despues continuar con el proceso de invitacion al pantry
 
 
 // Product routes
