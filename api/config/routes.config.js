@@ -21,6 +21,7 @@ const likeMid = require('../middlewares/like.middleware')
 // **************
 router.get('/test/:grocerDinnerId', grocerdinnerMid.exists)
 
+
 // GrocerDinner routes
 // *******************
 router.post('/grocerdinners', grocerdinnerCtrl.create)
@@ -49,7 +50,9 @@ router.get('/pantries/:pantryId', secureMid.auth, pantryMid.exists, pantryMid.ca
 
 router.patch('/pantries/:pantryId', secureMid.auth, pantryMid.exists, pantryMid.canMember('update'), pantryCtrl.update)
 
-router.delete('/pantries/:pantryId', secureMid.auth, pantryMid.exists, pantryMid.canMember('delete'), pantryMid.count, pantryCtrl.delete)
+router.delete('/pantries/:pantryId', secureMid.auth, pantryMid.exists, pantryMid.canMember('delete'), pantryCtrl.delete)
+
+router.patch('/pantries/:pantryId/invitation/:invitationToken', secureMid.invitationAuth, pantryMid.exists, pantryMid.canMember('join'), pantryCtrl.update)
 
 
 // Product routes

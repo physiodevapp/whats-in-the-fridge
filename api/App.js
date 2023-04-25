@@ -14,6 +14,9 @@ const secureMid = require('./middlewares/secure.middleware')
 // Create express App
 const app = express()
 
+// Configure public resources
+app.use(express.static(`${__dirname}/public`)) 
+
 // Configure request unwanted data
 app.use(secureMid.cleanBody)
 

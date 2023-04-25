@@ -60,7 +60,13 @@ module.exports.detail = (req, res, next) => {
 }
 
 module.exports.update = (req, res, next) => {
-  Object.assign(req.pantry, req.body)
+  console.log('update')
+  if (req.userInvitation) {
+    console.log(req.pantry.members)
+    req.pantry.members.push(req.userInvitation.newMember)
+  } else {
+    Object.assign(req.pantry, req.body)
+  }
   req.pantry.save()
     .then((pantry) => {
       console.log('pantry updated >> ', pantry)

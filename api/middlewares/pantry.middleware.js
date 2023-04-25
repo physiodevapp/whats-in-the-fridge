@@ -16,32 +16,30 @@ module.exports.exists = (req, res, next) => {
 
 module.exports.canMember = (action) => {
   return (req, res, next) => {
+
     const member = req.pantry.members.find((member) => member.grocerDinnerObjId == req.user.id)
-    if (member) {      
-      const canDo = member.role === req.user.role && (action === 'delete' || action === 'near')   ||
-      req.user.role !== 'guest' && action === 'update' ||
-      !action
+
+    if (member) {
+      const canDo = member.role === req.user.role && (req.user.pantries.length > 1 && action === 'delete') ||
+        member.role === req.user.role && action === 'near' ||
+        member.role !== 'guest' && action === 'update' ||
+        !action
 
       if (canDo) {
         next()
+      } else if (action === 'delete') {
+        next(createError(404, "Forbidden deletion: you can not have no pantries"))
+      } else if (action === 'join') {
+        next(createError(400, "Already member of this pantry"))
       } else {
         next(createError(403, "Forbidden membership activity"))
       }
+
+    } else if (!member && action === 'join') {
+      next()
 
     } else {
       next(createError(403, "Forbidden membership"))
     }
   }
 }
-
-module.exports.count = (req, res, next) => {
-  Pantry.find({ 'members.grocerDinnerObjId': { $in: [req.user.id] } })
-    .then((pantries) => {
-      if (pantries.length > 1) {
-        next()
-      } else {
-        next(createError(404, "Forbidden deletion: you can not have no pantries"))
-      }
-    })
-    .catch(next)
-} 
