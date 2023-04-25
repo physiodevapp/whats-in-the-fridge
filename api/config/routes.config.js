@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 
+const storage = require('../config/storage.config')
+
 const secureMid = require('../middlewares/secure.middleware')
 
 const grocerdinnerCtrl = require('../controllers/grocerdinner.controller')
@@ -29,9 +31,11 @@ router.patch('/grocerdinners/:grocerDinnerId', secureMid.auth, grocerdinnerMid.e
 
 router.delete('/grocerdinners/:grocerDinnerId', secureMid.auth, grocerdinnerMid.exists, grocerdinnerMid.isMe, grocerdinnerCtrl.delete)
 
+
 // Grocer pantry routes - PUBLIC
 // *****************************
 router.get('/pantries', pantryCtrl.list('grocer'))
+
 
 // Pantry routes
 // *************
@@ -50,6 +54,8 @@ router.delete('/pantries/:pantryId', secureMid.auth, pantryMid.exists, pantryMid
 
 // Product routes
 //***************
+router.post('/pantries/:pantryId/products/:productId/upload', secureMid.auth, pantryMid.exists, pantryMid.canMember(), productMid.exists, storage.single("urlImage"), productCtrl.upload)
+
 router.post('/pantries/:pantryId/products', secureMid.auth, pantryMid.exists, pantryMid.canMember(), productCtrl.create)
 
 router.get('/pantries/:pantryId/products', secureMid.auth, pantryMid.exists, pantryMid.canMember(), productCtrl.list)
@@ -60,14 +66,17 @@ router.patch('/pantries/:pantryId/products/:productId', secureMid.auth, pantryMi
 
 router.delete('/pantries/:pantryId/products/:productId', secureMid.auth, pantryMid.exists, pantryMid.canMember(), productMid.exists, productCtrl.delete)
 
+
 // Like routes
 // ****************
 router.post('/pantries/:pantryId/products/:productId/likes', secureMid.auth, pantryMid.exists, productMid.exists, likeMid.exists, likeMid.canDinner('create'), likeCtrl.create)
 
 router.delete('/pantries/:pantryId/products/:productId/likes', secureMid.auth, pantryMid.exists, productMid.exists, likeMid.exists, likeMid.canDinner('delete'), likeCtrl.delete)
 
+
 // Access routes
 // *************
 router.post('/login', grocerdinnerCtrl.login)
+
 
 module.exports = router
