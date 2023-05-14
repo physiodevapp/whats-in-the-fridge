@@ -36,38 +36,3 @@ module.exports.auth = (req, res, next) => {
     next(createError(401, error))
   }
 }
-
-module.exports.invitationAuth = (req, res, next) => {
-  const token = req.params.invitationToken
-  console.log('invitationToken >> ', req.params)
-  if (!token) {
-    next(createError("Missing token"))
-  }
-  try {
-    const decoded = jwt.decode(token, process.env.JWT_SECRET)
-    console.log('decoded invitation token >> ', decoded)
-    GrocerDinner.findOne({ email: decoded.sub })
-      .populate('pantries')
-      .then((grocerDinner) => {
-        if (grocerDinner && grocerDinner?.role === 'dinner') {
-          req.user = grocerDinner 
-          // como hacer para que te loguee y a continuación ya sigua con el proceso de invitarte (la segunda parte si funciona). Habria que redirigir a la pagina del login si no es persistente el token y desde ahi continuar
-          req.params.pantryId = decoded.pantryId
-          req.userInvitation = {
-            newMember: {
-              grocerDinnerObjId: grocerDinner._id,
-              role: 'guest'
-            }
-          }
-          console.log('invitation user >> ', req.user)
-          next()
-        } else {
-          next(createError(404, "Not a dinner yet!"))
-          // redirect en react al login ??
-        }
-      })
-      .catch(next)
-  } catch (error) {
-    next(createError(401, error))
-  }
-}

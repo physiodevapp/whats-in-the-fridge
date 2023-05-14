@@ -17,7 +17,7 @@ const storage = new CloudinaryStorage({
     allowed_formats: ["jpg","png"],
     format: 'jpg', // instruct Cloudinary to convert rejected formats to another one
     public_id: (req, file) => {
-      return req.product.id // must be unique :)
+      return req.product?.id || file.originalname // better be unique :)
     }
   }
 })

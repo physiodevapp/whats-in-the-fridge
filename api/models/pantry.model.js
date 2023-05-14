@@ -7,12 +7,12 @@ const pantrySchema = new Schema({
     required: "Pantry name is required",
     minLength: [10, "Pantry name must be at least 10 chars length"]
   },
-  username: {
-    type: String,
-    required: "Pantry username is required",
-    minLength: [4, "Pantry username must be at least 4 chars len"],
-    unique: true
-  },
+  // username: {
+  //   type: String,
+  //   required: "Pantry username is required",
+  //   minLength: [4, "Pantry username must be at least 4 chars len"],
+  //   unique: true
+  // },
   members: [
     {
       grocerDinnerObjId: {
@@ -23,19 +23,34 @@ const pantrySchema = new Schema({
         type: String,
         enum: ['guest', 'vip', 'dinner', 'grocer'], // guest añade/quita productos >> vip same+ invita >> dinner same+ elimina >> grocer same+ visible por todos
         default: 'guest'
+      },
+      defaultOwner: {
+        type: Boolean,
+        default: false,
+        required: true
       }
     }
   ],
+  address: String,
   location: {
-    type: {
-      type: String,
-      enum: ['Point'],
-      default: "Point",
-      required: true,
-    },
-    coordinates: {
-      type: [Number],
-      required: true
+    type: new Schema({
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: "Point",
+        required: true,
+      },
+      coordinates: {
+        type: [Number],
+        required: true
+      }
+    }),
+    validate: {
+      validator: function(location) {
+        console.log('location validation >> ', location)
+        return this.address != undefined && location.coordinates?.length
+      },
+      message: `Location is required`
     }
   }
 }, {
@@ -49,6 +64,11 @@ const pantrySchema = new Schema({
       delete ret.__v
       ret.id = ret._id
       delete ret._id
+      ret.location = {
+        address: ret.address,
+        coordinates: ret.location.coordinates
+      }
+      delete ret.address
       return ret
     }
   }
@@ -75,15 +95,15 @@ pantrySchema.static('findByDistance', function ({ longitude, latitude, distance,
         key: 'location',
         spherical: true
       },
-    }, 
+    },
     {
       $sort: {
         distance: 1
       }
     }
-    // {
-    //   $limit: 4 
-    // }
+      // {
+      //   $limit: 4 
+      // }
     ]
   )
 })

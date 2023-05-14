@@ -2,7 +2,7 @@ const Product = require('../models/product.model')
 const createError = require('http-errors')
 
 module.exports.upload = (req, res, next) => {
-  // console.log('req >> ', req)
+  console.log('upload request >> ', req.file)
   if (!req.file) {
     req.file = {
       path: 'https://img.icons8.com/nolan/256/fridge.png' // default product image url
@@ -12,6 +12,7 @@ module.exports.upload = (req, res, next) => {
 } 
 
 module.exports.create = (req, res, next) => {
+  console.log('product create >> ', req.body)
   Object.assign(req.body, { grocerDinnerObjId: req.user.id, pantryObjId: req.pantry.id })
   Product.create(req.body)
     .then((product) => {
@@ -22,7 +23,7 @@ module.exports.create = (req, res, next) => {
 
 module.exports.list = (req, res, next) => {
   const criterial = {
-    grocerDinnerObjId: req.user.id,
+    // grocerDinnerObjId: req.user.id,
     pantryObjId: req.pantry.id
   }
   Product.find(criterial)

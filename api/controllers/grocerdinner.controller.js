@@ -2,8 +2,12 @@ const GrocerDinner = require('../models/grocerdinner.model')
 const Pantry = require('../models/pantry.model')
 const createError = require('http-errors')
 const jwt = require('jsonwebtoken')
+const moment = require('moment')
+
+const MAX_SESSION_HOURS = parseInt(process.env.MAX_SESSION_HOURS || 1)
 
 module.exports.create = (req, res, next) => {
+  delete req.body.location
   GrocerDinner.create(req.body)
     .then((grocerdinner) => {
       return Pantry.create({
@@ -11,13 +15,15 @@ module.exports.create = (req, res, next) => {
         username: `${grocerdinner.username}'s tasty pantry`,
         members: [{
           grocerDinnerObjId: grocerdinner.id,
-          role: `${grocerdinner.role}`
+          role: `${grocerdinner.role}`,
+          defaultOwner: true
         }],
-        location : {
+        address: "madrid, ES",
+        location: {
           "type": "Point",
           "coordinates": [
-            79.814636,
-            28.625181
+            -3.6709929,
+            40.3990597
           ]
         }
       }).then((pantry) => {
@@ -56,6 +62,7 @@ module.exports.delete = (req, res, next) => { //TODO rehacer
 
 module.exports.login = (req, res, next) => {
   GrocerDinner.findOne({ username: req.body.username })
+    .populate('pantries')
     .then((grocerDinner) => {
       if (!grocerDinner) {
         next(createError(401, "Invalid credentials"))
@@ -66,7 +73,7 @@ module.exports.login = (req, res, next) => {
               next(createError(401, "Invalid credentials"))
             } else {
               const token = jwt.sign(
-                { sub: grocerDinner.id, exp: Date.now() / 1000 + 3_600 },
+                { sub: grocerDinner.id, exp: moment().add(MAX_SESSION_HOURS, 'hours').valueOf() / 1000 }, // 1 hour duration
                 process.env.JWT_SECRET
               )
 

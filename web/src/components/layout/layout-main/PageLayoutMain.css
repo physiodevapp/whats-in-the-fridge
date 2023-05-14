@@ -1,0 +1,320 @@
+body ::-webkit-scrollbar {
+  display: none !important;
+}
+
+/************* PAGE-LAYOUT *************/
+
+.page-layout {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: start;
+  align-items: center;
+  width: 100vw;
+  overflow: hidden
+}
+
+.page-layout>.container {
+  padding: 1rem 1rem 0 1rem;
+  height: calc(100vh - 50px) !important;
+}
+
+/************ NAVBAR *************/
+
+.page-layout>.navbar-container {
+  width: 100vw;
+  height: 50px !important;
+  z-index: 100;
+}
+
+.page-layout>.navbar-container .left-btn button{
+  border-width: inherit;
+  /* border-radius: 50% 10% 50% 10%; */
+}
+
+.page-layout>.navbar-container .right-btn button{
+  border-width:  inherit;
+}
+
+.page-layout>.navbar-container>.navbar {
+  background-color: #e5cb84 !important;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  justify-content: start;
+}
+
+.page-layout>.navbar-container>.navbar .navbar-brand {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+.page-layout>.navbar-container>.navbar .navbar-title {
+  font-size: 1.5rem;
+  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.page-layout>.navbar-container>.navbar .navbar-title::first-letter {
+  text-transform: capitalize;
+}
+
+/************ BOTTOM-RIGH-BUTTON ************/
+
+.right-bottom-btn {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 0 1rem 30px 0;
+}
+
+.right-bottom-btn button {
+  font-size: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 13px;
+  width: 4.5rem;
+  height: 0.6rem;
+  padding: 1.5rem 0rem;
+  border: 3px dashed black;
+  background-color: rgb(255 255 255 / 89%);
+  color: black; 
+}
+
+.right-bottom-btn button:hover {
+  color: white
+}
+
+.right-bottom-btn button .fa {
+  color: inherit;
+  padding-top: 0.25rem !important;
+  font-size: 1.2em;
+}
+
+.right-bottom-btn button .fa:hover {
+  color: white;
+}
+
+/********** BOTTOM LEFT BUTTON *************/
+.left-bottom-btn {
+  position: fixed;
+  bottom: 0;
+  left: 1rem;
+  margin: 0 30px 30px 0;
+  border: 2px solid black;
+  background-color: rgba(255, 255, 255, 0.57);
+}
+
+/********* BARCODE-VIDEO-CAPTURE **********/
+
+.container .row-camera {
+  width: calc(100vw - 1rem);
+}
+
+.container video {
+  height: 100%;
+  width: 100%;
+}
+
+.container .row-form-product {
+  position: absolute;
+  bottom: 0;
+  width: calc(100vw - 1rem);
+  height: calc(100% - 250px);
+  background: white;
+}
+
+.video-wrapper {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  width: calc(100vw - 2rem);
+  height: calc(200px - 1rem);
+  margin: 0 1rem;
+  border-radius: 21px;
+  border: 4px dashed #575972b3;
+  outline: solid 2rem white;
+}
+
+.video-wrapper-outline {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  width: calc(100vw - 2rem);
+  height: calc(200px - 1rem);
+  margin: 0 1rem;
+  border-radius: 24px;
+  border: 2px solid black;
+  outline: solid 2rem white;
+  outline-offset: -10px;
+}
+
+/***************** PRODUCT-FORM ******************/
+
+.container form .input-group.wrap-tags {
+  z-index: 12;
+}
+
+.container form .input-group.wrap-location {
+  flex-wrap: nowrap !important;
+  z-index: 10;
+}
+
+.container form .input-group.wrap-location>div {
+  width: 100%;
+}
+
+.container form .input-group input {
+  border-radius: var(--bs-border-radius);
+  padding: 0.375rem 0.4rem;
+}
+
+.container form .input-group>span {
+  padding: 0.375rem 0.4rem !important;
+}
+
+.container form .bottom-wrap{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  margin: 1rem;
+  width: calc(100% - 2rem);
+}
+
+.container form button[type="submit"] {
+  width: 100%;
+}
+
+.container.bottom-wrap button.image-taken{
+  background: #e5cb84;
+  color: black;
+}
+
+/************ ITEM-LIST ************/
+
+.container .item-list {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: 100%;
+}
+
+.container .item-list .card {
+  border-color: #e5cb84;
+  width: 100%;
+  margin: 6px 0 6px 0;
+}
+
+.container .item-list .card .col-tags {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+/*************** SWIPEABLE-LIST-EFFECT ****************/
+
+.swipeable-list-item__trailing-actions {
+  height: calc(100% - 12px) !important;
+  top: 6px !important;
+  right: -10px !important;
+  background: red;
+  border-radius: var(--bs-border-radius);
+  display: flex;
+  align-items: center;
+}
+
+/*************** GOOGLE MAPS *******************/
+#mapZoomRange{
+  position: absolute;
+  z-index: 1;
+  bottom: 50%;
+  right: -50%;
+  transform: rotateZ(-90deg) translateY(-1.9rem) !important;
+}
+
+#mapZoomRange::-webkit-slider-thumb {
+  background: black
+}
+
+/* #mapZoomRange::-webkit-slider-thumb:active {
+  background: red
+} */
+
+#mapZoomRange::-webkit-slider-runnable-track {
+  background: #e5cb84;
+  border: 0px dashed black;
+}
+
+.gm-style-iw-t>div[role=dialog] {
+  padding-left: 0;
+}
+
+button.gm-ui-hover-effect {
+  display: none !important
+}
+
+/********** MENU ACCORDION ***********/
+.accordion-body button {
+  /* color: #e5cb84; */
+  background: white;
+  font-size: 1.2rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.accordion-body button::first-letter {
+  text-transform: capitalize;
+}
+
+.accordion-body .list-group-item.active {
+  font-weight: bold;
+  font-size: 1.4rem;
+  color: #ddae2d;;
+  background: white;
+  font-weight: bold;
+  font-size: 1.4rem;
+  border-top: 1px solid !important;
+  border-bottom: 1px solid !important;
+  margin: 10px o 10px 0 !important;
+}
+
+.behind-disabled {
+  background: red;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  z-index: 4;
+}
+
+/*************** BACKGROUND IMAGE **************/
+.inviting-background img, .joining-background img {
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+}
+
+/******** PRODUCT LIST *********/
+.card-title.imminent {
+  color:red !important
+}
+
+/************** LOGIN ***************/
+
+.invalid-feedback.login {
+  color: white !important;
+  background: #dc3545 !important;
+  font-size: 1rem !important;
+  border-radius: 8px !important;
+  text-align: center !important;
+}
+

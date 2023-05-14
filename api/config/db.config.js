@@ -1,12 +1,12 @@
 const mongoose = require('mongoose')
-const MONGO_DB_URI = process.env.MONGO_DB_URI || 'mongodb://127.0.0.1:27017/whats-in-the-fridge'
+const MONGO_DB_URI = process.env.MONGO_DB_URI || 'mongodb://127.0.0.1:27017/your-database'
 
 mongoose.connect(MONGO_DB_URI)
 .then((response) => {
-  console.log(`App was connected successfully to database ${MONGO_DB_URI}`)
+  console.log(`App was connected successfully to database`)
 })
 .catch((error) => {
-  console.log(`An error ocurred while trying to connect to database ${MONGO_DB_URI}`)
+  console.log(`An error ocurred while trying to connect to database`)
 })
 
 process.on("SIGINT", function() {

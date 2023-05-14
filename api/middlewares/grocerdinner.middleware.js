@@ -18,6 +18,7 @@ module.exports.exists = (req, res, next) => {
 }
 
 module.exports.isMe = (req, res, next) => {
+  // console.log('isMe ?? >> ', req.params.grocerDinnerId)
   if (req.user.id !== req.params.grocerDinnerId &&
     req.params.grocerDinnerId !== 'me') {
     next(createError(403, "Forbidden"))

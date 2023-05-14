@@ -44,7 +44,7 @@ router.get('/pantries/:pantryId/near', secureMid.auth, pantryMid.exists, pantryM
 
 router.post('/pantries', secureMid.auth, pantryCtrl.create)
 
-router.get('/pantries/my-pantries', secureMid.auth, pantryCtrl.list())
+router.get('/pantries/my-pantries', secureMid.auth, pantryCtrl.list()) 
 
 router.get('/pantries/:pantryId', secureMid.auth, pantryMid.exists, pantryMid.canMember(), pantryCtrl.detail)
 
@@ -52,22 +52,24 @@ router.patch('/pantries/:pantryId', secureMid.auth, pantryMid.exists, pantryMid.
 
 router.delete('/pantries/:pantryId', secureMid.auth, pantryMid.exists, pantryMid.canMember('delete'), pantryCtrl.delete)
 
-router.patch('/pantries/invitation/:invitationToken', secureMid.invitationAuth, pantryMid.exists, pantryMid.canMember('join'), pantryCtrl.update) // TODO redirigir al login en react si no hay toque de login y despues continuar con el proceso de invitacion al pantry
+router.post('/pantries/:pantryId/invite', secureMid.auth, pantryMid.exists, pantryMid.canMember('invite'), pantryCtrl.invite)
+
+router.post('/pantries/:pantryId/join', secureMid.auth, pantryMid.exists, pantryMid.canMember('join'), pantryCtrl.join)
 
 
 // Product routes
 //***************
-router.post('/pantries/:pantryId/products/:productId/upload', secureMid.auth, pantryMid.exists, pantryMid.canMember(), productMid.exists, storage.single("urlImage"), productCtrl.upload)
+router.post('/pantries/:pantryId/products/:productId/upload', secureMid.auth, pantryMid.exists, pantryMid.canMember(), productMid.exists('required'), storage.single("urlImage"), productCtrl.upload)
 
-router.post('/pantries/:pantryId/products', secureMid.auth, pantryMid.exists, pantryMid.canMember(), productCtrl.create)
+router.post('/pantries/:pantryId/products', secureMid.auth, pantryMid.exists, pantryMid.canMember(), productMid.exists('not-required'), productCtrl.create)
 
 router.get('/pantries/:pantryId/products', secureMid.auth, pantryMid.exists, pantryMid.canMember(), productCtrl.list)
 
-router.get('/pantries/:pantryId/products/:productId', secureMid.auth, pantryMid.exists, pantryMid.canMember(), productMid.exists, productCtrl.detail)
+router.get('/pantries/:pantryId/products/:productId', secureMid.auth, pantryMid.exists, pantryMid.canMember(), productMid.exists('required'), productCtrl.detail)
 
-router.patch('/pantries/:pantryId/products/:productId', secureMid.auth, pantryMid.exists, pantryMid.canMember(), productMid.exists, productCtrl.update)
+router.patch('/pantries/:pantryId/products/:productId', secureMid.auth, pantryMid.exists, pantryMid.canMember(), productMid.exists('required'), productCtrl.update)
 
-router.delete('/pantries/:pantryId/products/:productId', secureMid.auth, pantryMid.exists, pantryMid.canMember(), productMid.exists, productCtrl.delete)
+router.delete('/pantries/:pantryId/products/:productId', secureMid.auth, pantryMid.exists, pantryMid.canMember(), productMid.exists('required'), productCtrl.delete)
 
 
 // Like routes

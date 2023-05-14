@@ -14,8 +14,13 @@ const secureMid = require('./middlewares/secure.middleware')
 // Create express App
 const app = express()
 
+
+// Configure CORS
+const cors = require('./config/cors.config')
+app.use(cors)
+
 // Configure public resources
-app.use(express.static(`${__dirname}/public`)) 
+app.use(express.static(`${__dirname}/public/frontend/build`)) 
 
 // Configure request unwanted data
 app.use(secureMid.cleanBody)
@@ -30,8 +35,13 @@ app.use(logger('dev'))
 const routes = require('./config/routes.config')
 app.use('/api-fridge/v1', routes)
 
+const routesFrontend = require('./config/routes-frontend.config')
+app.use('/', routesFrontend)
+
 // Configure errors
 app.use((req, res, next) => {
+  console.log('errors params, ')
+  // res.redirect('/')
   next(createError(404, 'Resource not found'))
 })
 app.use((error, req, res, next) => {
@@ -47,7 +57,7 @@ app.use((error, req, res, next) => {
   } else if (error.message.includes('E11000')) {
     // Configure duplicate keys error
     Object.keys(error.keyValue).forEach((key) => error.keyValue[key] = "Already exists")
-    // OPCION 1 >> devuelve el mensaje de error original, que incluye el valor de la key duplilcada
+    // OPCION 1 >> devuelve el mensaje de error original, que incluye el valor de la key duplicada
     // Object.assign(error, { errors: error.keyValue })
     // error = createError(409, error)
 
@@ -77,7 +87,7 @@ app.use((error, req, res, next) => {
 })
 
 // Configure port and start listening...
-const port = 3001
+const port = process.env.PORT || 3001
 app.listen(port, () => {
   console.log(`App is running at port ${port}`)
 })
